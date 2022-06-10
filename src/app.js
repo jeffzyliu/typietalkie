@@ -1,42 +1,21 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import React, {
-  useEffect,
-  useState,
-  createRef,
-} from 'react';
-import { useSwipeable } from 'react-swipeable';
-// eslint-disable-next-line no-unused-vars
-import { firebase } from './services';
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from 'react-router-dom';
+
+import Editor from './routes/edit';
 
 function App() {
-  const textAreaRef = createRef();
-
-  const [height, setHeight] = useState(`${window.innerHeight}px`);
-  const [text, setText] = useState('');
-
-  useEffect(() => {
-    window.visualViewport.addEventListener(
-      'resize',
-      (event) => {
-        setHeight(`${event.target.height}px`);
-      },
-    );
-  }, []);
-
-  const handlers = useSwipeable({
-    onSwipedLeft: () => setText(''),
-    onSwipedDown: () => textAreaRef.current?.blur?.(),
-  });
-
   return (
-    <div {...handlers}>
-      <textarea
-        style={{ height }}
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-        ref={textAreaRef}
-      />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element="hi!" />
+        <Route path="/edit" element={<Editor />} />
+        <Route path="*" element="404" />
+      </Routes>
+    </Router>
   );
 }
 
