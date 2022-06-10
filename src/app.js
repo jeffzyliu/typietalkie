@@ -5,6 +5,8 @@ import React, {
   createRef,
 } from 'react';
 import { useSwipeable } from 'react-swipeable';
+// eslint-disable-next-line no-unused-vars
+import { firebase } from './services';
 
 function App() {
   const textAreaRef = createRef();

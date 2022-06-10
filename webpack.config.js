@@ -11,7 +11,7 @@ const autoprefixer = require('autoprefixer');
 const postcssPresets = require('postcss-preset-env');
 
 require('dotenv-safe').config({ silent: true });
-const DotenvPlugin = require('webpack-dotenv-plugin');
+const DotenvPlugin = require('dotenv-webpack');
 
 module.exports = {
   mode: env,
@@ -25,7 +25,6 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           { loader: 'babel-loader' },
-          // { loader: 'eslint-loader' },
         ],
       },
       {
@@ -83,9 +82,8 @@ module.exports = {
     }),
     new DotenvPlugin({
       path: '.env',
-      sample: '.env',
-      allowEmptyValues: true,
-      silent: true,
+      safe: true,
+      systemvars: true,
     }),
   ],
   devServer: {
