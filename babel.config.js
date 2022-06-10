@@ -6,12 +6,7 @@ module.exports = {
     [
       'module-resolver',
       {
-        // root: ['./src'],
-        // alias: { '#': './src/' },
         alias: { '^#(.+)': './src/\\1' },
-        // alias: {
-        //   services: './src/services',
-        // },
       },
     ],
   ],
