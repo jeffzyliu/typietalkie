@@ -20,8 +20,15 @@ jobs:
         node-version: [16.x] # needs to be updated to fit project standard
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-    # env: # uncomment if env vars needed for build step
-      # KEY: ${{ secrets.KEY }}
+    env: # uncomment if env vars needed for build step
+      API_KEY: ${{ secrets.API_KEY }}
+      APP_ID: ${{ secrets.APP_ID }}
+      AUTH_DOMAIN: ${{ secrets.AUTH_DOMAIN }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      MEASUREMENT_ID: ${{ secrets.MEASUREMENT_ID }}
+      MESSAGING_SENDER_ID: ${{ secrets.MESSAGING_SENDER_ID }}
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      STORAGE_BUCKET: ${{ secrets.STORAGE_BUCKET }}
 
     steps:
     - uses: actions/checkout@v3
