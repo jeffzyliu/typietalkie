@@ -26,7 +26,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element="hi!" />
-        <Route path="/:room"
+        <Route path="/:roomId"
           element={(
             <Editor
               height={height}
@@ -34,7 +34,7 @@ function App() {
             />
           )}
         />
-        <Route path="/:room/edit"
+        <Route path="/:roomId/edit"
           element={(
             <Editor
               height={height}

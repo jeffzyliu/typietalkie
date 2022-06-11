@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { firebase } from '#services';
+import { useParams } from 'react-router-dom';
 
 function Editor(props) {
   const {
@@ -13,10 +14,10 @@ function Editor(props) {
     viewOnly,
   } = props;
 
+  const { roomId } = useParams();
+
   const [text, setText] = useState('');
   // const [history, setHistory] = useState('');
-
-  const roomId = 'test';
 
   useEffect(
     () => {
