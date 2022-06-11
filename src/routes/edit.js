@@ -68,7 +68,10 @@ function Editor(props) {
           readOnly={viewOnly}
         />
       </div>
-      <div className={`Modal ${displayModal ? 'Show' : ''}`}>
+      <div
+        className={`Modal ${displayModal ? 'Show' : ''}`}
+        style={{ 'max-height': height - 100 }}
+      >
         {Object.entries(history)
           .reverse()
           .map(([k, v]) => (

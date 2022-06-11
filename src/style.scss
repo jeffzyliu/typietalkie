@@ -38,22 +38,28 @@ textarea:focus {
 
 .Modal {
     position: fixed;
-    bottom: -150vh;
+    top: 150vh;
     width: 100%;
     padding: 6px;
     left: 0;
     font-family: -apple-system, sans-serif;
     font-weight: bold;
     background-color: #1c1c1c;
-    transition: bottom 0.3s ease-out;
+    transition: top 0.3s ease-out;
     z-index: 10;
+    overflow-y: auto;
+    touch-action: pan-y;
 
     div {
         background-color: #1c1c1c;
-        margin: 6px;
+        font-size: 18px;
+        margin: 12px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 }
 
 .Modal.Show {
-    bottom: 0;
+    top: 100px;
 }

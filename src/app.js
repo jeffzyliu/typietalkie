@@ -11,13 +11,13 @@ import {
 import Editor from '#routes/edit';
 
 function App() {
-  const [height, setHeight] = useState(`${window.innerHeight}px`);
+  const [height, setHeight] = useState(window.innerHeight);
 
   useEffect(() => {
     window.visualViewport.addEventListener(
       'resize',
       (event) => {
-        setHeight(`${event.target.height}px`);
+        setHeight(event.target.height);
       },
     );
   }, []);
