@@ -37,25 +37,31 @@ function Editor(props) {
   );
 
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
-  const handleClear = (oldText) => oldText && firebase.clearText(roomId, oldText);
+  const handleClear = () => {
+    if (viewOnly) return;
+    firebase.pushToHistory(roomId, text);
+    firebase.editRoomText(roomId, '');
+  };
+  const handleHistoryText = (historyText) => {
+    if (viewOnly) return;
+    firebase.pushToHistory(roomId, text);
+    firebase.editRoomText(roomId, historyText);
+    setDisplayModal(false);
+  };
 
   const textAreaRef = createRef();
 
-  const efn = (e) => e;
-
   const handlerFunctions = {
-    onSwipedLeft: !viewOnly ? () => handleClear(text) : efn,
-    onSwipedDown: !viewOnly ? () => {
+    onSwipedLeft: () => handleClear(),
+    onSwipedDown: () => {
       textAreaRef.current?.blur?.();
       setDisplayModal(false);
-    } : efn,
+    },
     onSwipedUp: () => setDisplayModal(true),
     onSwipedRight: () => setDisplayModal(true),
   };
 
   const handlers = useSwipeable(handlerFunctions);
-
-  console.log(history);
 
   return (
     <>
@@ -74,13 +80,13 @@ function Editor(props) {
       >
         {Object.entries(history)
           .reverse()
-          .map(([k, v]) => (
+          .map(([key, historyText]) => (
             <div
-              key={k}
+              key={key}
               className="historyItem"
-              onClick={efn}
+              onClick={() => handleHistoryText(historyText)}
             >
-              {v}
+              {historyText}
             </div>
           ))}
       </div>

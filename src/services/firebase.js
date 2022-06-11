@@ -50,19 +50,20 @@ export const editRoomText = (roomId, text) => {
   update(roomRef, { text });
 };
 
-export const clearText = (roomId, currentText) => {
+export const clearHistory = (roomId) => {
+  const roomRef = ref(db, `rooms/${roomId}`);
+  update(roomRef, { history: null });
+};
+
+export const pushToHistory = (roomId, textForHistory) => {
+  if (!textForHistory) return;
+
   const roomRef = ref(db, `rooms/${roomId}`);
   const historyRef = ref(db, `rooms/${roomId}/history`);
 
   const newHistoryKey = push(historyRef).key;
 
   update(roomRef, {
-    text: '',
-    [`history/${newHistoryKey}`]: currentText,
+    [`history/${newHistoryKey}`]: textForHistory,
   });
-};
-
-export const clearHistory = (roomId) => {
-  const roomRef = ref(db, `rooms/${roomId}`);
-  update(roomRef, { history: null });
 };
