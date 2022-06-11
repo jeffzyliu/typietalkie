@@ -20,6 +20,10 @@ html, body {
     overflow: hidden;
 }
 
+#main {
+    padding: 6px;
+}
+
 #main, textarea {
     width: 100%;
 }
@@ -34,4 +38,33 @@ textarea {
 
 textarea:focus {
     outline: none;
+}
+
+.Modal {
+    position: fixed;
+    top: 150vh;
+    width: 100%;
+    padding: 6px;
+    left: 0;
+    font-family: -apple-system, sans-serif;
+    font-weight: bold;
+    background-color: #1c1c1c;
+    transition: top 0.3s ease-out;
+    z-index: 10;
+    overflow-y: auto;
+    touch-action: pan-y;
+
+    div {
+        background-color: #1c1c1c;
+        font-size: 18px;
+        padding: 12px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        border-bottom: 1px solid grey;
+    }
+}
+
+.Modal.Show {
+    top: 100px;
 }

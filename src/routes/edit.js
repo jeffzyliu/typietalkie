@@ -17,38 +17,80 @@ function Editor(props) {
   const { roomId } = useParams();
 
   const [text, setText] = useState('');
-  // const [history, setHistory] = useState('');
+  const [history, setHistory] = useState({});
+  const [displayModal, setDisplayModal] = useState(false);
 
   useEffect(
     () => {
-      const off = firebase.connectToRoom(roomId, (room) => setText(room?.text));
+      const off = firebase.connectToRoomText(roomId, setText);
+      return off;
+    },
+    [],
+  );
+
+  useEffect(
+    () => {
+      const off = firebase.connectToRoomHistory(roomId, setHistory);
       return off;
     },
     [],
   );
 
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
+  const handleClear = () => {
+    if (viewOnly) return;
+    firebase.pushToHistory(roomId, text);
+    firebase.editRoomText(roomId, '');
+  };
+  const handleHistoryText = (historyText) => {
+    if (viewOnly) return;
+    firebase.pushToHistory(roomId, text);
+    firebase.editRoomText(roomId, historyText);
+    setDisplayModal(false);
+  };
+
   const textAreaRef = createRef();
 
-  const efn = (e) => e;
-
   const handlerFunctions = {
-    onSwipedLeft: !viewOnly ? () => handleTextChange('') : efn,
-    onSwipedDown: !viewOnly ? () => textAreaRef.current?.blur?.() : efn,
+    onSwipedLeft: () => handleClear(),
+    onSwipedDown: () => {
+      textAreaRef.current?.blur?.();
+      setDisplayModal(false);
+    },
+    onSwipedUp: () => setDisplayModal(true),
+    onSwipedRight: () => setDisplayModal(true),
   };
 
   const handlers = useSwipeable(handlerFunctions);
 
   return (
-    <div {...handlers}>
-      <textarea
-        style={{ height }}
-        value={text}
-        onChange={(event) => handleTextChange(event.target.value)}
-        ref={textAreaRef}
-        readOnly={viewOnly}
-      />
-    </div>
+    <>
+      <div {...handlers}>
+        <textarea
+          style={{ height }}
+          value={text}
+          onChange={(event) => handleTextChange(event.target.value)}
+          ref={textAreaRef}
+          readOnly={viewOnly}
+        />
+      </div>
+      <div
+        className={`Modal ${displayModal ? 'Show' : ''}`}
+        style={{ 'max-height': height - 100 }}
+      >
+        {Object.entries(history)
+          .reverse()
+          .map(([key, historyText]) => (
+            <div
+              key={key}
+              className="historyItem"
+              onClick={() => handleHistoryText(historyText)}
+            >
+              {historyText}
+            </div>
+          ))}
+      </div>
+    </>
   );
 }
 
