@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable no-unused-vars */
 import { initializeApp } from 'firebase/app';
 import {
   getDatabase,
@@ -16,11 +14,10 @@ const firebaseConfig = {
   storageBucket: process.env.STORAGE_BUCKET,
   messagingSenderId: process.env.MESSAGING_SENDER_ID,
   appId: process.env.APP_ID,
-  // measurementId: process.env.MEASUREMENT_ID,
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 const db = getDatabase();
 
 export const connectToRoom = (roomId, callback) => {
@@ -28,7 +25,6 @@ export const connectToRoom = (roomId, callback) => {
 
   const off = onValue(roomRef, (snapshot) => {
     if (snapshot.val()) {
-      console.log(snapshot.val());
       callback(snapshot.val());
     }
   });
@@ -38,6 +34,5 @@ export const connectToRoom = (roomId, callback) => {
 
 export const editRoomText = (roomId, text) => {
   const roomRef = ref(db, `rooms/${roomId}`);
-  console.log(text);
   set(roomRef, { text });
 };

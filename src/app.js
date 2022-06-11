@@ -11,8 +11,6 @@ import {
 import Editor from '#routes/edit';
 
 function App() {
-  const [text, setText] = useState('');
-
   const [height, setHeight] = useState(`${window.innerHeight}px`);
 
   useEffect(() => {
@@ -31,8 +29,6 @@ function App() {
         <Route path="/:room"
           element={(
             <Editor
-              text={text}
-              setText={setText}
               height={height}
               viewOnly
             />
@@ -41,8 +37,6 @@ function App() {
         <Route path="/:room/edit"
           element={(
             <Editor
-              text={text}
-              setText={setText}
               height={height}
             />
           )}
