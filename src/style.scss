@@ -35,3 +35,25 @@ textarea {
 textarea:focus {
     outline: none;
 }
+
+.Modal {
+    position: fixed;
+    bottom: -150vh;
+    width: 100%;
+    padding: 6px;
+    left: 0;
+    font-family: -apple-system, sans-serif;
+    font-weight: bold;
+    background-color: #1c1c1c;
+    transition: bottom 0.3s ease-out;
+    z-index: 10;
+
+    div {
+        background-color: #1c1c1c;
+        margin: 6px;
+    }
+}
+
+.Modal.Show {
+    bottom: 0;
+}

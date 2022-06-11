@@ -17,7 +17,8 @@ function Editor(props) {
   const { roomId } = useParams();
 
   const [text, setText] = useState('');
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState({});
+  const [displayModal, setDisplayModal] = useState(false);
 
   useEffect(
     () => {
@@ -29,14 +30,14 @@ function Editor(props) {
 
   useEffect(
     () => {
-      const off = firebase.connectToRoomHistory(roomId, (h) => setHistory(Object.values(h)));
+      const off = firebase.connectToRoomHistory(roomId, setHistory);
       return off;
     },
     [],
   );
 
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
-  const handleClear = (oldText) => firebase.clearText(roomId, oldText);
+  const handleClear = (oldText) => oldText && firebase.clearText(roomId, oldText);
 
   const textAreaRef = createRef();
 
@@ -44,7 +45,12 @@ function Editor(props) {
 
   const handlerFunctions = {
     onSwipedLeft: !viewOnly ? () => handleClear(text) : efn,
-    onSwipedDown: !viewOnly ? () => textAreaRef.current?.blur?.() : efn,
+    onSwipedDown: !viewOnly ? () => {
+      textAreaRef.current?.blur?.();
+      setDisplayModal(false);
+    } : efn,
+    onSwipedUp: () => setDisplayModal(true),
+    onSwipedRight: () => setDisplayModal(true),
   };
 
   const handlers = useSwipeable(handlerFunctions);
@@ -52,15 +58,30 @@ function Editor(props) {
   console.log(history);
 
   return (
-    <div {...handlers}>
-      <textarea
-        style={{ height }}
-        value={text}
-        onChange={(event) => handleTextChange(event.target.value)}
-        ref={textAreaRef}
-        readOnly={viewOnly}
-      />
-    </div>
+    <>
+      <div {...handlers}>
+        <textarea
+          style={{ height }}
+          value={text}
+          onChange={(event) => handleTextChange(event.target.value)}
+          ref={textAreaRef}
+          readOnly={viewOnly}
+        />
+      </div>
+      <div className={`Modal ${displayModal ? 'Show' : ''}`}>
+        {Object.entries(history)
+          .reverse()
+          .map(([k, v]) => (
+            <div
+              key={k}
+              className="historyItem"
+              onClick={efn}
+            >
+              {v}
+            </div>
+          ))}
+      </div>
+    </>
   );
 }
 
