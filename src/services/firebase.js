@@ -3,7 +3,8 @@ import {
   getDatabase,
   ref,
   onValue,
-  set,
+  update,
+  push,
 } from 'firebase/database';
 
 const firebaseConfig = {
@@ -20,11 +21,23 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 const db = getDatabase();
 
-export const connectToRoom = (roomId, callback) => {
-  const roomRef = ref(db, `rooms/${roomId}`);
+export const connectToRoomText = (roomId, callback) => {
+  const roomTextRef = ref(db, `rooms/${roomId}/text`);
 
-  const off = onValue(roomRef, (snapshot) => {
-    if (snapshot.val()) {
+  const off = onValue(roomTextRef, (snapshot) => {
+    if (snapshot.val() !== null) {
+      callback(snapshot.val());
+    }
+  });
+
+  return off;
+};
+
+export const connectToRoomHistory = (roomId, callback) => {
+  const roomHistoryRef = ref(db, `rooms/${roomId}/history`);
+
+  const off = onValue(roomHistoryRef, (snapshot) => {
+    if (snapshot.val() !== null) {
       callback(snapshot.val());
     }
   });
@@ -34,5 +47,22 @@ export const connectToRoom = (roomId, callback) => {
 
 export const editRoomText = (roomId, text) => {
   const roomRef = ref(db, `rooms/${roomId}`);
-  set(roomRef, { text });
+  update(roomRef, { text });
+};
+
+export const clearText = (roomId, currentText) => {
+  const roomRef = ref(db, `rooms/${roomId}`);
+  const historyRef = ref(db, `rooms/${roomId}/history`);
+
+  const newHistoryKey = push(historyRef).key;
+
+  update(roomRef, {
+    text: '',
+    [`history/${newHistoryKey}`]: currentText,
+  });
+};
+
+export const clearHistory = (roomId) => {
+  const roomRef = ref(db, `rooms/${roomId}`);
+  update(roomRef, { history: null });
 };
