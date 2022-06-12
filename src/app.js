@@ -9,7 +9,6 @@ import {
   Route,
 } from 'react-router-dom';
 
-// import Editor from '#routes/edit';
 const Editor = React.lazy(() => import('#routes/edit'));
 
 function App() {
