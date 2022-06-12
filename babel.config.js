@@ -15,7 +15,6 @@ module.exports = (api) => {
     ],
     presets: [
       // Enable development transform of React with new automatic runtime
-      // ['@babel/react'],
       ['@babel/preset-react', { development: !api.env('production'), runtime: 'automatic' }],
       ['@babel/preset-env', { targets: '> 0.25%, not dead' }],
     ],
