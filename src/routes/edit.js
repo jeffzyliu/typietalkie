@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, {
-  createRef,
   useState,
   useEffect,
 } from 'react';
 import { useSwipeable } from 'react-swipeable';
+import useFitText from 'use-fit-text';
 import { firebase } from '#services';
 import { useParams } from 'react-router-dom';
 
@@ -19,6 +19,12 @@ function Editor(props) {
   const [text, setText] = useState('');
   const [history, setHistory] = useState({});
   const [displayModal, setDisplayModal] = useState(false);
+
+  const { fontSize, ref: textAreaRef } = useFitText({
+    maxFontSize: 280,
+    minFontSize: 180,
+    resolution: 10,
+  });
 
   useEffect(
     () => {
@@ -47,9 +53,8 @@ function Editor(props) {
     firebase.pushToHistory(roomId, text);
     firebase.editRoomText(roomId, historyText);
     setDisplayModal(false);
+    textAreaRef.current?.focus?.();
   };
-
-  const textAreaRef = createRef();
 
   const handlerFunctions = {
     onSwipedLeft: () => handleClear(),
@@ -67,7 +72,7 @@ function Editor(props) {
     <>
       <div {...handlers}>
         <textarea
-          style={{ height }}
+          style={{ height, fontSize }}
           value={text}
           onChange={(event) => handleTextChange(event.target.value)}
           ref={textAreaRef}
@@ -76,7 +81,7 @@ function Editor(props) {
       </div>
       <div
         className={`Modal ${displayModal ? 'Show' : ''}`}
-        style={{ 'max-height': height - 100 }}
+        style={{ height: height - 100 }}
       >
         {Object.entries(history)
           .reverse()
