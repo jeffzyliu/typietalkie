@@ -1,25 +1,23 @@
-module.exports = {
-  plugins: [
-    '@babel/plugin-transform-runtime',
-    '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-proposal-object-rest-spread',
-    'react-refresh/babel',
-    [
-      'module-resolver',
-      {
+module.exports = (api) => {
+  // This caches the Babel config
+  api.cache(() => process.env.NODE_ENV);
+
+  return {
+    plugins: [
+      '@babel/plugin-transform-runtime',
+      '@babel/plugin-proposal-class-properties',
+      '@babel/plugin-proposal-object-rest-spread',
+      ['module-resolver', {
         alias: { '^#(.+)': './src/\\1' },
-      },
+      }],
+      // Applies the react-refresh Babel plugin on non-production mnly
+      ...(api.env('production') ? [] : ['react-refresh/babel']),
     ],
-  ],
-  presets: [
-    [
-      '@babel/react',
+    presets: [
+      // Enable development transform of React with new automatic runtime
+      // ['@babel/react'],
+      ['@babel/preset-react', { development: !api.env('production'), runtime: 'automatic' }],
+      ['@babel/preset-env', { targets: '> 0.25%, not dead' }],
     ],
-    [
-      '@babel/preset-env',
-      {
-        targets: '> 0.25%, not dead',
-      },
-    ],
-  ],
+  };
 };
