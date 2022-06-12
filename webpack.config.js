@@ -10,6 +10,8 @@ const autoprefixer = require('autoprefixer');
 
 const postcssPresets = require('postcss-preset-env');
 
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
 require('dotenv-safe').config({ silent: true });
 const DotenvPlugin = require('dotenv-webpack');
 
@@ -24,7 +26,12 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: [
-          { loader: 'babel-loader' },
+          {
+            loader: 'babel-loader',
+            options: {
+              plugins: [env === 'development' && 'react-refresh/babel'].filter(Boolean),
+            },
+          },
         ],
       },
       {
@@ -85,7 +92,8 @@ module.exports = {
       safe: true,
       systemvars: true,
     }),
-  ],
+    env === 'development' && new ReactRefreshWebpackPlugin(),
+  ].filter(Boolean),
   devServer: {
     hot: true,
     historyApiFallback: true,

@@ -12,7 +12,3 @@ root.render(
     <App />
   </React.StrictMode>,
 );
-
-if (module.hot) {
-  module.hot.accept('./app');
-}
