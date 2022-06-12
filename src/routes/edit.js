@@ -76,7 +76,7 @@ function Editor(props) {
       </div>
       <div
         className={`Modal ${displayModal ? 'Show' : ''}`}
-        style={{ 'max-height': height - 100 }}
+        style={{ height: height - 100 }}
       >
         {Object.entries(history)
           .reverse()
