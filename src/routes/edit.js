@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, {
-  createRef,
   useState,
   useEffect,
 } from 'react';
 import { useSwipeable } from 'react-swipeable';
+import useFitText from 'use-fit-text';
 import { firebase } from '#services';
 import { useParams } from 'react-router-dom';
 
@@ -49,7 +49,7 @@ function Editor(props) {
     setDisplayModal(false);
   };
 
-  const textAreaRef = createRef();
+  const { fontSize, ref: textAreaRef } = useFitText({ maxFontSize: 280, minFontSize: 150 });
 
   const handlerFunctions = {
     onSwipedLeft: () => handleClear(),
@@ -67,7 +67,7 @@ function Editor(props) {
     <>
       <div {...handlers}>
         <textarea
-          style={{ height }}
+          style={{ height, fontSize }}
           value={text}
           onChange={(event) => handleTextChange(event.target.value)}
           ref={textAreaRef}
