@@ -20,6 +20,12 @@ function Editor(props) {
   const [history, setHistory] = useState({});
   const [displayModal, setDisplayModal] = useState(false);
 
+  const { fontSize, ref: textAreaRef } = useFitText({
+    maxFontSize: 280,
+    minFontSize: 180,
+    resolution: 10,
+  });
+
   useEffect(
     () => {
       const off = firebase.connectToRoomText(roomId, setText);
@@ -47,9 +53,8 @@ function Editor(props) {
     firebase.pushToHistory(roomId, text);
     firebase.editRoomText(roomId, historyText);
     setDisplayModal(false);
+    textAreaRef.current?.focus?.();
   };
-
-  const { fontSize, ref: textAreaRef } = useFitText({ maxFontSize: 280, minFontSize: 150 });
 
   const handlerFunctions = {
     onSwipedLeft: () => handleClear(),
