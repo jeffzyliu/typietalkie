@@ -20,6 +20,7 @@ function Editor(props) {
 
   const [text, setText] = useState('');
   const [history, setHistory] = useState({});
+  const [historyDummy, setHistoryDummy] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
   const [wantsFocus, setWantsFocus] = useState(false);
 
@@ -28,7 +29,6 @@ function Editor(props) {
     minFontSize: 20,
     resolution: 10,
   });
-
 
   useEffect(() => {
     const off = firebase.connectToRoomText(roomId, setText);
@@ -40,14 +40,24 @@ function Editor(props) {
     return off;
   }, [roomId]);
 
-  // track reference of prior history
-  const historyRef = useRef({});
+  useEffect(() => {
+    const off = firebase.connectToRoomHistory(roomId, setHistory);
+    return off;
+  }, [roomId]);
 
   useEffect(() => {
-    historyRef.current = history;
-  }, [history]);
+    const off = firebase.connectToRoomHistoryDummy(roomId, setHistoryDummy);
+    return off;
+  }, [roomId]);
 
-  const prevHistory = historyRef.current;
+  // track dummy for swapping
+  const historyDummyRef = useRef(false);
+
+  useEffect(() => {
+    historyDummyRef.current = historyDummy;
+  }, [historyDummy]);
+
+  const prevHistoryDummy = historyDummyRef.current;
 
   // manage focus and blur of text
   useEffect(() => {
@@ -55,13 +65,13 @@ function Editor(props) {
       textAreaRef.current?.blur?.();
     } else if (wantsFocus) {
       // jump to end if history changed
-      if (prevHistory !== history) {
-        const length = textAreaRef.current?.value?.length ?? 0;
+      const length = textAreaRef.current?.value?.length ?? 0;
+      if (prevHistoryDummy !== historyDummy) {
         textAreaRef.current?.setSelectionRange?.(length, length);
       }
       textAreaRef.current?.focus?.();
     }
-  }, [displayModal, wantsFocus, textAreaRef, prevHistory, history]);
+  }, [displayModal, wantsFocus, textAreaRef, prevHistoryDummy, historyDummy]);
 
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
 
@@ -73,6 +83,7 @@ function Editor(props) {
 
   const handleHistoryText = (historyText) => {
     if (viewOnly) return;
+    firebase.editHistoryDummy(roomId, !historyDummy);
     firebase.pushToHistory(roomId, text);
     firebase.editRoomText(roomId, historyText);
     setDisplayModal(false);
