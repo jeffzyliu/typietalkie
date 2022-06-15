@@ -41,11 +41,6 @@ function Editor(props) {
   }, [roomId]);
 
   useEffect(() => {
-    const off = firebase.connectToRoomHistory(roomId, setHistory);
-    return off;
-  }, [roomId]);
-
-  useEffect(() => {
     const off = firebase.connectToRoomHistoryDummy(roomId, setHistoryDummy);
     return off;
   }, [roomId]);
@@ -64,7 +59,7 @@ function Editor(props) {
     if (displayModal || !wantsFocus) {
       textAreaRef.current?.blur?.();
     } else if (wantsFocus) {
-      // jump to end if history changed
+      // jump to end if history recalled
       const length = textAreaRef.current?.value?.length ?? 0;
       if (prevHistoryDummy !== historyDummy) {
         textAreaRef.current?.setSelectionRange?.(length, length);
