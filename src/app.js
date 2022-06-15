@@ -12,13 +12,13 @@ import {
 const Editor = React.lazy(() => import('#routes/edit'));
 
 function App() {
-  const [height, setHeight] = useState(window.innerHeight);
+  const [height, setHeight] = useState(window.innerHeight - 10);
 
   useEffect(() => {
     window.visualViewport.addEventListener(
       'resize',
       (event) => {
-        setHeight(event.target.height);
+        setHeight(event.target.height - 10);
       },
     );
   }, []);
