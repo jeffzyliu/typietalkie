@@ -22,7 +22,7 @@ function Editor(props) {
 
   const { fontSize, ref: textAreaRef } = useFitText({
     maxFontSize: 280,
-    minFontSize: 180,
+    minFontSize: 20,
     resolution: 10,
   });
 
@@ -42,31 +42,47 @@ function Editor(props) {
     [],
   );
 
+  useEffect(() => {
+    if (displayModal) textAreaRef.current?.blur?.();
+    else textAreaRef.current?.focus?.();
+  }, [displayModal]);
+
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
+
   const handleClear = () => {
     if (viewOnly) return;
     firebase.pushToHistory(roomId, text);
     firebase.editRoomText(roomId, '');
   };
+
   const handleHistoryText = (historyText) => {
     if (viewOnly) return;
     firebase.pushToHistory(roomId, text);
     firebase.editRoomText(roomId, historyText);
     setDisplayModal(false);
-    textAreaRef.current?.focus?.();
+  };
+
+  const closeHistoryOrUnfocus = () => {
+    // this triggers before useEffect and handles the case of history already closed
+    if (!displayModal) textAreaRef.current?.blur?.();
+    setDisplayModal(false);
+  };
+
+  const openHistory = () => {
+    setDisplayModal(true);
   };
 
   const handlerFunctions = {
-    onSwipedLeft: () => handleClear(),
-    onSwipedDown: () => {
-      textAreaRef.current?.blur?.();
-      setDisplayModal(false);
-    },
-    onSwipedUp: () => setDisplayModal(true),
-    onSwipedRight: () => setDisplayModal(true),
+    onSwipedLeft: handleClear,
+    onSwipedDown: closeHistoryOrUnfocus,
+    onSwipedUp: openHistory,
+    onSwipedRight: openHistory,
   };
 
   const handlers = useSwipeable(handlerFunctions);
+
+  // work against keyboard moving window up
+  window.scrollTo(0, 0);
 
   return (
     <>
@@ -77,6 +93,7 @@ function Editor(props) {
           onChange={(event) => handleTextChange(event.target.value)}
           ref={textAreaRef}
           readOnly={viewOnly}
+          disabled={displayModal}
         />
       </div>
       <div
