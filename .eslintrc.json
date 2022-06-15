@@ -21,7 +21,7 @@
             }
         ],
         "no-unused-vars": [
-            "error",
+            1,
             {
                 "vars": "all",
                 "args": "none"
