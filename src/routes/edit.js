@@ -2,11 +2,13 @@
 import React, {
   useState,
   useEffect,
+  useRef,
 } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import useFitText from 'use-fit-text';
-import { firebase } from '#services';
 import { useParams } from 'react-router-dom';
+
+import { firebase } from '#services';
 
 function Editor(props) {
   const {
@@ -18,6 +20,7 @@ function Editor(props) {
 
   const [text, setText] = useState('');
   const [history, setHistory] = useState({});
+  const [historyDummy, setHistoryDummy] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
   const [wantsFocus, setWantsFocus] = useState(false);
 
@@ -27,31 +30,43 @@ function Editor(props) {
     resolution: 10,
   });
 
-  useEffect(
-    () => {
-      const off = firebase.connectToRoomText(roomId, setText);
-      return off;
-    },
-    [],
-  );
+  useEffect(() => {
+    const off = firebase.connectToRoomText(roomId, setText);
+    return off;
+  }, [roomId]);
 
-  useEffect(
-    () => {
-      const off = firebase.connectToRoomHistory(roomId, setHistory);
-      return off;
-    },
-    [],
-  );
+  useEffect(() => {
+    const off = firebase.connectToRoomHistory(roomId, setHistory);
+    return off;
+  }, [roomId]);
 
+  useEffect(() => {
+    const off = firebase.connectToRoomHistoryDummy(roomId, setHistoryDummy);
+    return off;
+  }, [roomId]);
+
+  // track dummy for swapping
+  const historyDummyRef = useRef(false);
+
+  useEffect(() => {
+    historyDummyRef.current = historyDummy;
+  }, [historyDummy]);
+
+  const prevHistoryDummy = historyDummyRef.current;
+
+  // manage focus and blur of text
   useEffect(() => {
     if (displayModal || !wantsFocus) {
       textAreaRef.current?.blur?.();
     } else if (wantsFocus) {
-      // ideally only trigger next line if history just changed but that's hard
-      textAreaRef.current?.setSelectionRange(text.length, text.length);
+      // jump to end if history recalled
+      const length = textAreaRef.current?.value?.length ?? 0;
+      if (prevHistoryDummy !== historyDummy) {
+        textAreaRef.current?.setSelectionRange?.(length, length);
+      }
       textAreaRef.current?.focus?.();
     }
-  }, [displayModal, wantsFocus, textAreaRef?.current?.disabled]);
+  }, [displayModal, wantsFocus, textAreaRef, prevHistoryDummy, historyDummy]);
 
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
 
@@ -63,6 +78,7 @@ function Editor(props) {
 
   const handleHistoryText = (historyText) => {
     if (viewOnly) return;
+    firebase.editHistoryDummy(roomId, !historyDummy);
     firebase.pushToHistory(roomId, text);
     firebase.editRoomText(roomId, historyText);
     setDisplayModal(false);
