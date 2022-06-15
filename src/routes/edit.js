@@ -2,11 +2,13 @@
 import React, {
   useState,
   useEffect,
+  useRef,
 } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import useFitText from 'use-fit-text';
-import { firebase } from '#services';
 import { useParams } from 'react-router-dom';
+
+import { firebase } from '#services';
 
 function Editor(props) {
   const {
@@ -27,31 +29,39 @@ function Editor(props) {
     resolution: 10,
   });
 
-  useEffect(
-    () => {
-      const off = firebase.connectToRoomText(roomId, setText);
-      return off;
-    },
-    [],
-  );
 
-  useEffect(
-    () => {
-      const off = firebase.connectToRoomHistory(roomId, setHistory);
-      return off;
-    },
-    [],
-  );
+  useEffect(() => {
+    const off = firebase.connectToRoomText(roomId, setText);
+    return off;
+  }, [roomId]);
 
+  useEffect(() => {
+    const off = firebase.connectToRoomHistory(roomId, setHistory);
+    return off;
+  }, [roomId]);
+
+  // track reference of prior history
+  const historyRef = useRef({});
+
+  useEffect(() => {
+    historyRef.current = history;
+  }, [history]);
+
+  const prevHistory = historyRef.current;
+
+  // manage focus and blur of text
   useEffect(() => {
     if (displayModal || !wantsFocus) {
       textAreaRef.current?.blur?.();
     } else if (wantsFocus) {
-      // ideally only trigger next line if history just changed but that's hard
-      textAreaRef.current?.setSelectionRange(text.length, text.length);
+      // jump to end if history changed
+      if (prevHistory !== history) {
+        const length = textAreaRef.current?.value?.length ?? 0;
+        textAreaRef.current?.setSelectionRange?.(length, length);
+      }
       textAreaRef.current?.focus?.();
     }
-  }, [displayModal, wantsFocus, textAreaRef?.current?.disabled]);
+  }, [displayModal, wantsFocus, textAreaRef, prevHistory, history]);
 
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
 
