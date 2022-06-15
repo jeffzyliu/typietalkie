@@ -19,6 +19,7 @@ function Editor(props) {
   const [text, setText] = useState('');
   const [history, setHistory] = useState({});
   const [displayModal, setDisplayModal] = useState(false);
+  const [wantsFocus, setWantsFocus] = useState(false);
 
   const { fontSize, ref: textAreaRef } = useFitText({
     maxFontSize: 280,
@@ -43,9 +44,14 @@ function Editor(props) {
   );
 
   useEffect(() => {
-    if (displayModal) textAreaRef.current?.blur?.();
-    else textAreaRef.current?.focus?.();
-  }, [displayModal]);
+    if (displayModal || !wantsFocus) {
+      textAreaRef.current?.blur?.();
+    } else if (wantsFocus) {
+      // ideally only trigger next line if history just changed but that's hard
+      textAreaRef.current?.setSelectionRange(text.length, text.length);
+      textAreaRef.current?.focus?.();
+    }
+  }, [displayModal, wantsFocus, textAreaRef?.current?.disabled]);
 
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
 
@@ -94,6 +100,8 @@ function Editor(props) {
           ref={textAreaRef}
           readOnly={viewOnly}
           disabled={displayModal}
+          onFocus={() => setWantsFocus(true)}
+          onBlur={() => !displayModal && setWantsFocus(false)}
         />
       </div>
       <div
