@@ -57,6 +57,18 @@ export const connectToRoomHistoryDummy = (roomId, callback) => {
   return off;
 };
 
+export const connectToRoomAudioDummy = (roomId, callback) => {
+  const roomAudioDummyRef = ref(db, `rooms/${roomId}/audioDummy`);
+
+  const off = onValue(roomAudioDummyRef, (snapshot) => {
+    if (snapshot.val() !== null) {
+      callback(snapshot.val());
+    }
+  });
+
+  return off;
+};
+
 export const editRoomText = (roomId, text) => {
   const roomRef = ref(db, `rooms/${roomId}`);
   update(roomRef, { text });
@@ -65,6 +77,11 @@ export const editRoomText = (roomId, text) => {
 export const editHistoryDummy = (roomId, historyDummy) => {
   const roomRef = ref(db, `rooms/${roomId}`);
   update(roomRef, { historyDummy });
+};
+
+export const editAudioDummy = (roomId, audioDummy) => {
+  const roomRef = ref(db, `rooms/${roomId}`);
+  update(roomRef, { audioDummy });
 };
 
 export const clearHistory = (roomId) => {

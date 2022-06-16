@@ -48,8 +48,10 @@
   },
   "dependencies": {
     "firebase": "^9.8.3",
+    "howler": "^2.2.3",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-icons": "^4.4.0",
     "react-router-dom": "^6.3.0",
     "react-swipeable": "^7.0.0",
     "use-fit-text": "^2.4.0"

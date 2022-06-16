@@ -7,8 +7,21 @@ import React, {
 import { useSwipeable } from 'react-swipeable';
 import useFitText from 'use-fit-text';
 import { useParams } from 'react-router-dom';
+import { Howl } from 'howler';
+import { BsFillBellFill } from 'react-icons/bs';
 
 import { firebase } from '#services';
+import mp3 from '#public/untitled_goose_honk.mp3';
+
+const audio = new Howl({
+  src: [mp3],
+  html5: true,
+  onplayerror() {
+    audio.once('unlock', () => {
+      audio.play();
+    });
+  },
+});
 
 function Editor(props) {
   const {
@@ -21,6 +34,7 @@ function Editor(props) {
   const [text, setText] = useState('');
   const [history, setHistory] = useState({});
   const [historyDummy, setHistoryDummy] = useState(false);
+  const [audioDummy, setAudioDummy] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
   const [wantsFocus, setWantsFocus] = useState(false);
 
@@ -45,14 +59,24 @@ function Editor(props) {
     return off;
   }, [roomId]);
 
+  useEffect(() => {
+    const off = firebase.connectToRoomAudioDummy(roomId, setAudioDummy);
+    return off;
+  }, [roomId]);
+
   // track dummy for swapping
   const historyDummyRef = useRef(false);
+  const audioDummyRef = useRef(false);
 
   useEffect(() => {
     historyDummyRef.current = historyDummy;
   }, [historyDummy]);
+  useEffect(() => {
+    audioDummyRef.current = { val: audioDummy };
+  }, [audioDummy]);
 
   const prevHistoryDummy = historyDummyRef.current;
+  const prevAudioDummy = audioDummyRef.current;
 
   // manage focus and blur of text
   useEffect(() => {
@@ -67,6 +91,13 @@ function Editor(props) {
       textAreaRef.current?.focus?.();
     }
   }, [displayModal, wantsFocus, textAreaRef, prevHistoryDummy, historyDummy]);
+
+  useEffect(() => {
+    if (!prevAudioDummy) return;
+    if (audioDummy !== prevAudioDummy.val) {
+      audio.play();
+    }
+  }, [audioDummy, prevAudioDummy]);
 
   const handleTextChange = (newText) => firebase.editRoomText(roomId, newText);
 
@@ -103,11 +134,23 @@ function Editor(props) {
 
   const handlers = useSwipeable(handlerFunctions);
 
+  const handleAudio = () => {
+    firebase.editAudioDummy(roomId, !audioDummy);
+  };
+
   // work against keyboard moving window up
   window.scrollTo(0, 0);
 
   return (
     <>
+      <div
+        className="Float"
+      >
+        <BsFillBellFill
+          onClick={handleAudio}
+          size={35}
+        />
+      </div>
       <div {...handlers}>
         <textarea
           style={{ height, fontSize }}

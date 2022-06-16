@@ -68,3 +68,19 @@ textarea:focus {
 .Modal.Show {
     top: 100px;
 }
+
+.Float {
+    position: fixed;
+    z-index: 1;
+    right: 0;
+    background-color: #2f3f4f;
+    display: flex; 
+    padding: 5px;
+    border-radius: 4px;
+    margin-right: 8px;
+
+    svg {
+        background-color: transparent;
+        // color: #302E31
+    }
+}
