@@ -54,7 +54,7 @@ textarea:focus {
     overflow-y: auto;
     touch-action: pan-y;
 
-    div {
+    .historyItem {
         background-color: #1c1c1c;
         font-size: 18px;
         padding: 12px;
@@ -62,6 +62,21 @@ textarea:focus {
         overflow: hidden;
         white-space: nowrap;
         border-bottom: 1px solid grey;
+    }
+
+    .Collapse {
+        position: fixed;
+        z-index: 1;
+        right: 0;
+        display: flex;
+        padding: 5px;
+        border-radius: 4px;
+        margin-right: 8px;
+        background-color: #2f3f4f;
+
+        svg {
+            background-color: transparent;
+        }
     }
 }
 

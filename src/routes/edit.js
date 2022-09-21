@@ -7,6 +7,7 @@ import React, {
 import { useSwipeable } from 'react-swipeable';
 import useFitText from 'use-fit-text';
 import { useParams } from 'react-router-dom';
+import { BsArrowBarDown } from 'react-icons/bs';
 
 import { firebase } from '#services';
 
@@ -124,6 +125,14 @@ function Editor(props) {
         className={`Modal ${displayModal ? 'Show' : ''}`}
         style={{ height: height - 100 }}
       >
+        <div
+          className="Collapse"
+        >
+          <BsArrowBarDown
+            onClick={closeHistoryOrUnfocus}
+            size={35}
+          />
+        </div>
         {Object.entries(history)
           .reverse()
           .map(([key, historyText]) => (
