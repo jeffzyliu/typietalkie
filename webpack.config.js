@@ -12,7 +12,6 @@ const postcssPresets = require('postcss-preset-env');
 
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
-require('dotenv-safe').config({ silent: true });
 const DotenvPlugin = require('dotenv-webpack');
 
 module.exports = {
