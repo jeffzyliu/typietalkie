@@ -23,6 +23,18 @@ function App() {
     );
   }, []);
 
+  useEffect(() => {
+    async function screenAutoLockOff() {
+      try {
+        await navigator.wakeLock.request('screen');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    screenAutoLockOff();
+  });
+
   return (
     <Router>
       <Suspense fallback={<div />}>
@@ -34,14 +46,14 @@ function App() {
                 height={height}
                 viewOnly
               />
-          )}
+            )}
           />
           <Route path="/:roomId/edit"
             element={(
               <Editor
                 height={height}
               />
-          )}
+            )}
           />
           <Route path="*" element="404" />
         </Routes>
